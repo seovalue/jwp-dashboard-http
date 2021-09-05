@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 public class WebServer {
@@ -43,7 +45,8 @@ public class WebServer {
             throws IOException {
         Socket connection;
         while ((connection = serverSocket.accept()) != null) {
-            new Thread(new RequestHandler(connection, handlerMapping, httpRequestParser)).start();
+            ExecutorService executorService = Executors.newFixedThreadPool(10);
+            executorService.execute(new RequestHandler(connection, handlerMapping, httpRequestParser));
         }
     }
 
